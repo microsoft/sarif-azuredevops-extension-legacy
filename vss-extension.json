@@ -14,7 +14,7 @@
 			"type": "ms.vss-build-web.build-results-tab",
 			"targets": ["ms.vss-build-web.build-results-view"],
 			"properties": {
-				"name": "Sarif",
+				"name": "Scans",
 				"uri": "index.html"
 			}
 		}
