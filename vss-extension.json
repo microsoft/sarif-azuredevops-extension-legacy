@@ -7,9 +7,7 @@
 	"description": "View Sarif artifacts directly from the build page.",
 	"public": false,
 	"categories": ["Azure Pipelines"],
-	"targets": [
-		{ "id": "Microsoft.VisualStudio.Services" }
-	],
+	"targets": [{ "id": "Microsoft.VisualStudio.Services" }],
 	"contributions": [
 		{
 			"id": "sariftools.sarif-viewer-build-tab",
