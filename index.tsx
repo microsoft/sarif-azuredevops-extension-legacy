@@ -5,8 +5,6 @@ import {ResultsViewer, Dropdown} from 'sarif-web-component/Index.tsx'
 declare var zip: any
 declare var VSS: any
 
-VSS.init()
-
 const ensureFileLoaded = async file => {
 	file.json = file.json || await new Promise(resolve => {
 		file.getData(
@@ -25,6 +23,7 @@ class Tab extends React.Component<any, any> {
 	}
 	constructor(props) {
 		super(props)
+		VSS.init()
 		VSS.require(['TFS/Build/RestClient'], restClient => {
 			const config = VSS.getConfiguration()
 			config.onBuildChanged(async build => {
