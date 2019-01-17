@@ -47,23 +47,6 @@ class Tab extends React.Component<any, any> {
 	}
 	render() {
 		const {files, fileIndex, loading} = this.state
-		
-		// const dd = <select value={fileIndex} onChange={async e => {
-		// 		const i = e.target.value
-		// 		const file = files[i]
-		// 		file.json = file.json || await new Promise(resolve => {
-		// 			file.getData(
-		// 				new zip.TextWriter(),
-		// 				text => resolve(text),
-		// 				(current, total) => console.log(current, total)
-		// 			)
-		// 		})
-		// 		this.setState({ fileIndex: i })
-		// 	}}
-		// 	style={{ margin: 15, marginBottom: 0 }}>
-		// 	{files.map((f, i) => <option key={i} value={i}>{f.filename.replace('CodeAnalysisLogs/', '')}</option>)}
-		// </select>
-		
 		const dd = <Dropdown className="resultsDropdown"
 			options={files.map((f, i) => ({ key: i, text: f.filename.replace('CodeAnalysisLogs/', '') }))}
 			selectedKey={fileIndex}
