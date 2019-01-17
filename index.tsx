@@ -19,6 +19,7 @@ const ensureFileLoaded = async file => {
 
 class Tab extends React.Component<any, any> {
 	state = {
+		loading: true,
 		files: [],
 		fileIndex: 0,
 	}
@@ -40,14 +41,14 @@ class Tab extends React.Component<any, any> {
 									reader.getEntries(async entries => {
 										const files = entries.filter(entry => entry.filename.endsWith('.sarif'))
 										if (files.length) await ensureFileLoaded(files[0])
-										this.setState({ files })
+										this.setState({ loading: false, files })
 										// reader.close(() => {})
 									})
 								},
 								error => { debugger }
 							)
 						} else {
-							// Communicate no results found.
+							this.setState({ loading: false })
 						}
 					}
 				)
@@ -55,7 +56,7 @@ class Tab extends React.Component<any, any> {
 		})
 	}
 	render() {
-		const {files, fileIndex} = this.state
+		const {files, fileIndex, loading} = this.state
 		
 		// const dd = <select value={fileIndex} onChange={async e => {
 		// 		const i = e.target.value
@@ -83,6 +84,7 @@ class Tab extends React.Component<any, any> {
 					this.setState({ fileIndex: i })
 				}} />
 		
+		if (loading) return <div className="full">Loading...</div>
 		return files.length && files[fileIndex].json
 			? <ResultsViewer sarif={files[fileIndex].json} prefix={dd} />
 			: <div className="full">No SARIF artifacts found.</div>
