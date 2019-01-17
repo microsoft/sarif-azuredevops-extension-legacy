@@ -7,39 +7,11 @@ declare var VSS: any
 
 VSS.init()
 
-const sarif = {
-	"$schema": "http://json.schemastore.org/sarif-2.0.0",
-	"version": "2.0.0",
-	"runs": [{
-		"tool": { "name": "BinSkim" },
-		"results": [
-			{
-				"ruleId": "BA3001",
-				"level": "notApplicable",
-				"message": {
-					"arguments": [
-						"MixedMode_x86_VS2015_Default.exe",
-						"EnablePositionIndependentExecutable",
-						"image is not an ELF binary"
-					]
-				},
-				"ruleMessageId": "NotApplicable_InvalidMetadata",
-				"locations": [{
-					"physicalLocation": {
-						"fileLocation": {
-							"uri": "file:///Z:/src/Test.FunctionalTests.BinSkim.Driver/BaselineTestsData/MixedMode_x86_VS2015_Default.exe"
-						}
-					}
-				}]
-			},
-		],
-	}]
 }
 
-const defaultFile = { filename: 'Default', json: sarif }
 class Tab extends React.Component<any, any> {
 	state = {
-		files: [defaultFile],
+		files: [],
 		fileIndex: 0,
 	}
 	constructor(props) {
@@ -56,7 +28,7 @@ class Tab extends React.Component<any, any> {
 							zip.createReader(new zip.BlobReader(blob),
 								reader => {
 									reader.getEntries(entries => {
-										this.setState({ files: [defaultFile, ...entries.filter(entry => entry.filename.endsWith('.sarif'))] })
+										this.setState({ files: entries.filter(entry => entry.filename.endsWith('.sarif')) })
 										// reader.close(() => {})
 									})
 								},
@@ -103,7 +75,9 @@ class Tab extends React.Component<any, any> {
 					this.setState({ fileIndex: i })
 				}} />
 		
-		return <ResultsViewer sarif={files[fileIndex].json} prefix={dd} />
+		return files.length && files[fileIndex].json
+			? <ResultsViewer sarif={files[fileIndex].json} prefix={dd} />
+			: <div className="full">No SARIF artifacts found.</div>
 	}
 }
 
