@@ -77,12 +77,11 @@ class Tab extends React.Component<any, any> {
 		const dd = <Dropdown className="resultsDropdown"
 			options={files.map((f, i) => ({ key: i, text: f.filename.replace('CodeAnalysisLogs/', '') }))}
 			selectedKey={fileIndex}
-			onChanged={async option => {
-					const i = option.key
-					const file = files[i]
-					await ensureFileLoaded(file)
-					this.setState({ fileIndex: i })
-				}} />
+			onChange={async (ev, option, i) => {
+				const file = files[i]
+				await ensureFileLoaded(file)
+				this.setState({ fileIndex: i })
+			}} />
 		
 		if (loading) return <div className="full">Loading...</div>
 		return files.length && files[fileIndex].json
