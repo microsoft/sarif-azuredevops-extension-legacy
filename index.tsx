@@ -30,9 +30,11 @@ class Tab extends React.Component<any, any> {
 				VSS.require(
 					['TFS/Build/RestClient'],
 					async restClient => {
-						const client = restClient.getClient()
-						const artifacts = await client.getArtifactContentZip(build.id, 'CodeAnalysisLogs')
-							const blob = new Blob([new Uint8Array(artifacts)])
+						const client = restClient.getClient()						
+						const artifacts = await client.getArtifacts(build.id)
+						if (artifacts.filter(a => a.name === 'CodeAnalysisLogs').length) {
+							const logsZip = await client.getArtifactContentZip(build.id, 'CodeAnalysisLogs')
+							const blob = new Blob([new Uint8Array(logsZip)])
 							zip.createReader(new zip.BlobReader(blob),
 								reader => {
 									reader.getEntries(entries => {
@@ -42,6 +44,9 @@ class Tab extends React.Component<any, any> {
 								},
 								error => { debugger }
 							)
+						} else {
+							// Communicate no results found.
+						}
 					}
 				)
 			})
