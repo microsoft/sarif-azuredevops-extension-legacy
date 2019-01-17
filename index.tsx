@@ -28,30 +28,27 @@ class Tab extends React.Component<any, any> {
 		VSS.ready(() => {
 			const config = VSS.getConfiguration()
 			config.onBuildChanged(build => {
-				VSS.require(
-					['TFS/Build/RestClient'],
-					async restClient => {
-						const client = restClient.getClient()						
-						const artifacts = await client.getArtifacts(build.id)
-						if (artifacts.filter(a => a.name === 'CodeAnalysisLogs').length) {
-							const logsZip = await client.getArtifactContentZip(build.id, 'CodeAnalysisLogs')
-							const blob = new Blob([new Uint8Array(logsZip)])
-							zip.createReader(new zip.BlobReader(blob),
-								reader => {
-									reader.getEntries(async entries => {
-										const files = entries.filter(entry => entry.filename.endsWith('.sarif'))
-										if (files.length) await ensureFileLoaded(files[0])
-										this.setState({ loading: false, files })
-										// reader.close(() => {})
-									})
-								},
-								error => { debugger }
-							)
-						} else {
-							this.setState({ loading: false })
-						}
+				VSS.require(['TFS/Build/RestClient'], async restClient => {
+					const client = restClient.getClient()						
+					const artifacts = await client.getArtifacts(build.id)
+					if (artifacts.filter(a => a.name === 'CodeAnalysisLogs').length) {
+						const logsZip = await client.getArtifactContentZip(build.id, 'CodeAnalysisLogs')
+						const blob = new Blob([new Uint8Array(logsZip)])
+						zip.createReader(new zip.BlobReader(blob),
+							reader => {
+								reader.getEntries(async entries => {
+									const files = entries.filter(entry => entry.filename.endsWith('.sarif'))
+									if (files.length) await ensureFileLoaded(files[0])
+									this.setState({ loading: false, files })
+									// reader.close(() => {})
+								})
+							},
+							error => { debugger }
+						)
+					} else {
+						this.setState({ loading: false })
 					}
-				)
+				})
 			})
 		})
 	}
