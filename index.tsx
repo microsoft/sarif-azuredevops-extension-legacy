@@ -21,9 +21,9 @@ class Tab extends React.Component<any, any> {
 		super(props)
 		VSS.init()
 		VSS.require(['TFS/Build/RestClient'], restClient => {
+			const client = restClient.getClient()
 			const config = VSS.getConfiguration()
 			config.onBuildChanged(async build => {
-				const client = restClient.getClient()						
 				const artifacts = await client.getArtifacts(build.id)
 				if (artifacts.filter(a => a.name === 'CodeAnalysisLogs').length) {
 					const logsZip = await client.getArtifactContentZip(build.id, 'CodeAnalysisLogs')
