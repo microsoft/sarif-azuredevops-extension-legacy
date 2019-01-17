@@ -16,11 +16,7 @@ const ensureFileLoaded = async file => {
 }
 
 class Tab extends React.Component<any, any> {
-	state = {
-		loading: true,
-		files: [],
-		fileIndex: 0,
-	}
+	state = { loading: true, files: [], fileIndex: 0 }
 	constructor(props) {
 		super(props)
 		VSS.init()
