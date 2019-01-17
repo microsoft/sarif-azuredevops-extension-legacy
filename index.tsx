@@ -31,7 +31,7 @@ class Tab extends React.Component<any, any> {
 					['TFS/Build/RestClient'],
 					async restClient => {
 						const client = restClient.getClient()
-						client.getArtifactContentZip(build.id, 'CodeAnalysisLogs').then(artifacts => {
+						const artifacts = await client.getArtifactContentZip(build.id, 'CodeAnalysisLogs')
 							const blob = new Blob([new Uint8Array(artifacts)])
 							zip.createReader(new zip.BlobReader(blob),
 								reader => {
@@ -42,7 +42,6 @@ class Tab extends React.Component<any, any> {
 								},
 								error => { debugger }
 							)
-						})
 					}
 				)
 			})
