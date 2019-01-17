@@ -8,6 +8,7 @@
 	"public": false,
 	"categories": ["Azure Pipelines"],
 	"targets": [{ "id": "Microsoft.VisualStudio.Services" }],
+	"baseUri": "https://localhost:8080",
 	"contributions": [
 		{
 			"id": "sariftools.sarif-viewer-build-tab",
