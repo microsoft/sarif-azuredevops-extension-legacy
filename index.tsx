@@ -37,8 +37,10 @@ class Tab extends React.Component<any, any> {
 							const blob = new Blob([new Uint8Array(logsZip)])
 							zip.createReader(new zip.BlobReader(blob),
 								reader => {
-									reader.getEntries(entries => {
-										this.setState({ files: entries.filter(entry => entry.filename.endsWith('.sarif')) })
+									reader.getEntries(async entries => {
+										const files = entries.filter(entry => entry.filename.endsWith('.sarif'))
+										if (files.length) await ensureFileLoaded(files[0])
+										this.setState({ files })
 										// reader.close(() => {})
 									})
 								},
