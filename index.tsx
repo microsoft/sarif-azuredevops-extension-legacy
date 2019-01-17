@@ -7,6 +7,14 @@ declare var VSS: any
 
 VSS.init()
 
+const ensureFileLoaded = async file => {
+	file.json = file.json || await new Promise(resolve => {
+		file.getData(
+			new zip.TextWriter(),
+			text => resolve(text),
+			(current, total) => {}
+		)
+	})
 }
 
 class Tab extends React.Component<any, any> {
@@ -65,13 +73,7 @@ class Tab extends React.Component<any, any> {
 			onChanged={async option => {
 					const i = option.key
 					const file = files[i]
-					file.json = file.json || await new Promise(resolve => {
-						file.getData(
-							new zip.TextWriter(),
-							text => resolve(text),
-							(current, total) => {}
-						)
-					})
+					await ensureFileLoaded(file)
 					this.setState({ fileIndex: i })
 				}} />
 		
