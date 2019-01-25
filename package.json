@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server --mode development",
+    "publish": "webpack --mode development && tfx extension publish --output-path: vsix --rev-version",
     "p": "webpack --mode production",
     "d": "webpack --mode development"
   },
