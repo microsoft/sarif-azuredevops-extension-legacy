@@ -1,9 +1,8 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
+import 'script-loader!vss-web-extension-sdk/lib/VSS.SDK.min.js'
+import 'script-loader!./zip/zip.js'
 import {ResultsViewer, Dropdown} from 'sarif-web-component/Index.tsx'
-
-declare var zip: any
-declare var VSS: any
 
 const ensureFileLoaded = async file => {
 	file.json = file.json || await new Promise(resolve => {
@@ -14,6 +13,7 @@ const ensureFileLoaded = async file => {
 		)
 	})
 }
+declare var zip: any, VSS: any
 
 class Tab extends React.Component<any, any> {
 	state = { loading: true, files: [], fileIndex: 0 }
