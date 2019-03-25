@@ -5,10 +5,16 @@
 	"version": "0.1.11",
 	"name": "Sarif Viewer Build Tab",
 	"description": "View Sarif artifacts directly from the build page.",
-	"public": false,
+	"public": true,
 	"categories": ["Azure Pipelines"],
 	"targets": [{ "id": "Microsoft.VisualStudio.Services" }],
 	"baseUri": "https://localhost:8080",
+	
+	"icons": { "default": "default-icon.png" },
+	"content": {
+		"details": { "path": "overview.md" }
+	},
+	
 	"contributions": [
 		{
 			"id": "sariftools.sarif-viewer-build-tab",
