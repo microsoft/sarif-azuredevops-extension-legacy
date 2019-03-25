@@ -26,5 +26,5 @@
 		{ "addressable": true, "path": "zip", "packagePath": "/" },
 		{ "addressable": true, "path": "node_modules/vss-web-extension-sdk/lib", "packagePath": "lib" }
 	],
-	"scopes": ["vso.build_execute"]
+	"scopes": ["vso.build"]
 }
