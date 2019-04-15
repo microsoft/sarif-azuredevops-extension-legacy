@@ -28,8 +28,7 @@
 	],
 	"files": [
 		{ "addressable": true, "path": "index.html" },
-		{ "addressable": true, "path": "bundle.js" },
-		{ "addressable": true, "path": "zip", "packagePath": "/" }
+		{ "addressable": true, "path": "bundle.js" }
 	],
 	"scopes": ["vso.build"]
 }

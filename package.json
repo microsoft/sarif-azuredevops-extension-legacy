@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@types/node": "^10.12.12",
+    "jszip": "^3.2.1",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
     "sarif-web-component": "file:../sarif-web-component",

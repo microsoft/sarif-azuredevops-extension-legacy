@@ -1,11 +1,9 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import 'script-loader!vss-web-extension-sdk/lib/VSS.SDK.min.js'
-import 'script-loader!./zip/zip.js'
+import * as JSZip from 'jszip'
 import {ResultsViewer, Dropdown} from 'sarif-web-component/Index.tsx'
-
-declare var zip: any, VSS: any
-const promisify = (f, ...args) => new Promise(r => f(...args, r)) as any
+declare var VSS: any
 
 class Tab extends React.Component<any, any> {
 	state = { files: undefined, fileIndex: 0 }
@@ -18,16 +16,16 @@ class Tab extends React.Component<any, any> {
 				const artifacts = await client.getArtifacts(build.id, build.project.id)
 				const files = await (async () => {
 					if (!artifacts.some(a => a.name === 'CodeAnalysisLogs')) return []
-					const logsZip = await client.getArtifactContentZip(build.id, 'CodeAnalysisLogs', build.project.id)
-					const reader = await promisify(zip.createReader, new zip.BlobReader(new Blob([new Uint8Array(logsZip)])))
-					const entries = await promisify(reader.getEntries.bind(reader))
-					return entries
-						.filter(entry => entry.filename.endsWith('.sarif'))
+					const arrayBuffer = await client.getArtifactContentZip(build.id, 'CodeAnalysisLogs', build.project.id)					
+					const zip = await JSZip.loadAsync(arrayBuffer)
+					return Object.keys(zip.files).map(key => zip.files[key])
+						.filter(entry => !entry.dir && entry.name.endsWith('.sarif'))
 						.map((entry, i) => {
-							let p = undefined
+							let cachedPromise = undefined
 							return {
-								key: i, text: entry.filename.replace('CodeAnalysisLogs/', ''),
-								sarif: () => p = p || promisify(entry.getData.bind(entry), new zip.TextWriter())
+								key:   i,
+								text:  entry.name.replace('CodeAnalysisLogs/', ''),
+								sarif: () => cachedPromise = cachedPromise || entry.async('string')
 							}
 						})
 				})()
