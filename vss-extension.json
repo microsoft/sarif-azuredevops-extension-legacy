@@ -14,7 +14,11 @@
 	"content": {
 		"details": { "path": "overview.md" }
 	},
-	
+	"restrictedTo": [
+		"anonymous",
+		"public",
+		"member"
+	],
 	"contributions": [
 		{
 			"id": "sariftools.sarif-viewer-build-tab",
