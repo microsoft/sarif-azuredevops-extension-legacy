@@ -34,7 +34,7 @@ class Tab extends React.Component<any, any> {
 				this.setState({ files })
 				VSS.notifyLoadSucceeded()
 			}
-			VSS.getConfiguration().onBuildChanged(onBuildChanged) // ;onBuildChanged({ id: 75 })
+			VSS.getConfiguration().onBuildChanged(onBuildChanged) // ;onBuildChanged({ id: 334, project: { id: '185a21d5-2948-4dca-9f43-a9248d571bd3' } })
 		})
 	}
 	render() {
