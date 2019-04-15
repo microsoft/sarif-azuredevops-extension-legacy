@@ -15,10 +15,10 @@ class Tab extends React.Component<any, any> {
 		VSS.require(['TFS/Build/RestClient'], restClient => {
 			const client = restClient.getClient()
 			const onBuildChanged = async build => {
-				const artifacts = await client.getArtifacts(build.id)
+				const artifacts = await client.getArtifacts(build.id, build.project.id)
 				const files = await (async () => {
 					if (!artifacts.some(a => a.name === 'CodeAnalysisLogs')) return []
-					const logsZip = await client.getArtifactContentZip(build.id, 'CodeAnalysisLogs')
+					const logsZip = await client.getArtifactContentZip(build.id, 'CodeAnalysisLogs', build.project.id)
 					const reader = await promisify(zip.createReader, new zip.BlobReader(new Blob([new Uint8Array(logsZip)])))
 					const entries = await promisify(reader.getEntries.bind(reader))
 					return entries
