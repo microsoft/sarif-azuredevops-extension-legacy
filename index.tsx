@@ -21,7 +21,7 @@ class Tab extends React.Component<any, any> {
 					if (!artifacts.some(a => a.name === 'CodeAnalysisLogs')) return []
 					const arrayBuffer = await client.getArtifactContentZip(build.id, 'CodeAnalysisLogs', build.project.id)					
 					const zip = await JSZip.loadAsync(arrayBuffer)
-					return Object.keys(zip.files).map(key => zip.files[key])
+					return Object.values<any>(zip.files)
 						.filter(entry => !entry.dir && entry.name.endsWith('.sarif'))
 						.map((entry, i) => {
 							let cachedPromise = undefined

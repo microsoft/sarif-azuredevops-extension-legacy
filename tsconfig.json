@@ -3,7 +3,7 @@
 		"outDir": "./dist/",
 		"sourceMap": true,
 		"noImplicitAny": false,
-		"target": "ES6",
+		"target": "ES2017",
 		"module" : "CommonJS",
 		"moduleResolution": "Node",
 		"jsx": "react",
