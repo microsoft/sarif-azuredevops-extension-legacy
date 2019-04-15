@@ -1,5 +1,12 @@
+# SARIF Azure DevOps Extension
 
-# Contributing
+An Azure DevOps extension encapsulating the [SARIF Web Component](https://github.com/Microsoft/sarif-web-component).
+
+## Usage
+
+Install from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=sariftools.sarif-viewer-build-tab).
+
+## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
