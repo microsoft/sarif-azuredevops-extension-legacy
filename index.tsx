@@ -39,11 +39,12 @@ class Tab extends React.Component<any, any> {
 	}
 	render() {
 		const {files, fileIndex} = this.state
+		const diff = files && files.filter(f => f.text === 'diff.sarif').shift()
 		const dd = <Dropdown className="resultsDropdown"
 			options={files} selectedKey={fileIndex}
 			onChange={(ev, option, i) => this.setState({ fileIndex: i })} />
 		return !files || files.length
-			? <ResultsViewer sarif={files && files[fileIndex].sarif()} prefix={dd} />
+			? <ResultsViewer sarif={diff && diff.sarif() || files && files[fileIndex].sarif()} prefix={!diff && dd} />
 			: <div className="full">No SARIF artifacts found.</div>
 	}
 }
