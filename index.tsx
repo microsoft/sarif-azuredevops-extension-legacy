@@ -5,11 +5,11 @@ import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import 'script-loader!vss-web-extension-sdk/lib/VSS.SDK.min.js'
 import * as JSZip from 'jszip'
-import {ResultsViewer, Dropdown} from 'sarif-web-component/Index.tsx'
+const {Viewer} = require('sarif-web-component/components/Viewer.tsx')
 declare var VSS: any
 
 class Tab extends React.Component<any, any> {
-	state = { files: undefined, fileIndex: 0 }
+	state = { log: undefined, files: undefined, fileIndex: 0 }
 	constructor(props) {
 		super(props)
 		VSS.init({
@@ -35,20 +35,17 @@ class Tab extends React.Component<any, any> {
 							}
 						})
 				})()
-				this.setState({ files })
+				const first = files && files[0]
+				this.setState({ log: first && JSON.parse(await first.sarif()) })
 				VSS.notifyLoadSucceeded()
 			}
 			VSS.getConfiguration().onBuildChanged(onBuildChanged) // ;onBuildChanged({ id: 334, project: { id: '185a21d5-2948-4dca-9f43-a9248d571bd3' } })
 		})
 	}
 	render() {
-		const {files, fileIndex} = this.state
-		const diff = files && files.filter(f => f.text === 'diff.sarif').shift()
-		const dd = <Dropdown className="resultsDropdown"
-			options={files} selectedKey={fileIndex}
-			onChange={(ev, option, i) => this.setState({ fileIndex: i })} />
+		const {files, log} = this.state
 		return !files || files.length
-			? <ResultsViewer sarif={diff && diff.sarif() || files && files[fileIndex].sarif()} prefix={!diff && dd} />
+			? <Viewer runs={log && log.runs} />
 			: <div className="full">No SARIF artifacts found.</div>
 	}
 }

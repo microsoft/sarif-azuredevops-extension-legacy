@@ -10,9 +10,9 @@
   "dependencies": {
     "@types/node": "^10.12.12",
     "jszip": "^3.2.1",
-    "react": "^16.6.3",
-    "react-dom": "^16.6.3",
-    "sarif-web-component": "file:../sarif-web-component",
+	"react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "sarif-web-component": "file:../sarif-web-component-adoui",
     "url-loader": "^2.0.0",
     "vss-web-extension-sdk": "^5.141.0"
   },
