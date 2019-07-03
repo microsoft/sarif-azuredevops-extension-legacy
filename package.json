@@ -4,11 +4,8 @@
   "description": "Sarif Viewer DevOps Build Extension",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server --mode development",
-    "publish": "webpack --mode development && tfx extension publish --output-path: vsix --rev-version",
-    "p": "webpack --mode production",
-    "d": "webpack --mode development"
+    "publish": "webpack && tfx extension publish --output-path: vsix --rev-version"
   },
   "dependencies": {
     "@types/node": "^10.12.12",
@@ -16,6 +13,7 @@
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
     "sarif-web-component": "file:../sarif-web-component",
+    "url-loader": "^2.0.0",
     "vss-web-extension-sdk": "^5.141.0"
   },
   "devDependencies": {
