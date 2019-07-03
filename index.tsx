@@ -12,7 +12,10 @@ class Tab extends React.Component<any, any> {
 	state = { files: undefined, fileIndex: 0 }
 	constructor(props) {
 		super(props)
-		VSS.init({ explicitNotifyLoaded: true })
+		VSS.init({
+			applyTheme: true,
+			explicitNotifyLoaded: true,
+		})
 		VSS.require(['TFS/Build/RestClient'], restClient => {
 			const client = restClient.getClient()
 			const onBuildChanged = async build => {
