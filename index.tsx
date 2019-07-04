@@ -3,13 +3,16 @@
 
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
+import {observable} from 'mobx'
+import {observer} from 'mobx-react'
+
 import 'script-loader!vss-web-extension-sdk/lib/VSS.SDK.min.js'
 import * as JSZip from 'jszip'
-const {Viewer} = require('sarif-web-component/components/Viewer.tsx')
+import {Viewer} from 'sarif-web-component/components/Viewer'
 declare var VSS: any
 
-class Tab extends React.Component<any, any> {
-	state = { log: undefined, files: undefined, fileIndex: 0 }
+@observer class Tab extends React.Component {
+	@observable.ref runs = undefined as any[]
 	constructor(props) {
 		super(props)
 		VSS.init({
@@ -36,16 +39,17 @@ class Tab extends React.Component<any, any> {
 						})
 				})()
 				const first = files && files[0]
-				this.setState({ log: first && JSON.parse(await first.sarif()) })
+				const log = first && JSON.parse(await first.sarif())
+				this.runs = log.runs
 				VSS.notifyLoadSucceeded()
 			}
 			VSS.getConfiguration().onBuildChanged(onBuildChanged) // ;onBuildChanged({ id: 334, project: { id: '185a21d5-2948-4dca-9f43-a9248d571bd3' } })
 		})
 	}
 	render() {
-		const {files, log} = this.state
-		return !files || files.length
-			? <Viewer runs={log && log.runs} />
+		const {runs} = this
+		return !runs || runs.length
+			? <Viewer runs={runs} />
 			: <div className="full">No SARIF artifacts found.</div>
 	}
 }
