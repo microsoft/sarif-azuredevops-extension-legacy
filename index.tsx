@@ -8,11 +8,11 @@ import {observer} from 'mobx-react'
 
 import 'script-loader!vss-web-extension-sdk/lib/VSS.SDK.min.js'
 import * as JSZip from 'jszip'
-import {Viewer} from 'sarif-web-component'
+import {Log, Run, Viewer} from 'sarif-web-component'
 declare var VSS: any
 
 @observer class Tab extends React.Component {
-	@observable.ref runs = undefined as any[]
+	@observable.ref runs = undefined as Run[]
 	constructor(props) {
 		super(props)
 		VSS.init({
@@ -39,7 +39,7 @@ declare var VSS: any
 						})
 				})()
 				const first = files && files[0]
-				const log = first && JSON.parse(await first.sarif())
+				const log = first && JSON.parse(await first.sarif()) as Log
 				this.runs = log.runs
 				VSS.notifyLoadSucceeded()
 			}
