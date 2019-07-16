@@ -2,7 +2,7 @@
 	"manifestVersion": 1,
 	"id": "sarif-viewer-build-tab",
 	"publisher": "sariftools",
-	"version": "0.1.11",
+	"version": "0.2.0",
 	"name": "Sarif Viewer Build Tab",
 	"description": "View Sarif artifacts directly from the build page.",
 	"public": true,
