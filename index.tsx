@@ -12,7 +12,7 @@ import {Log, Run, Viewer} from 'sarif-web-component'
 declare var VSS: any
 
 @observer class Tab extends React.Component {
-	@observable.ref runs = undefined as Run[]
+	@observable.ref logs = undefined as Log[]
 	constructor(props) {
 		super(props)
 		VSS.init({
@@ -30,26 +30,26 @@ declare var VSS: any
 					return Object.values<any>(zip.files)
 						.filter(entry => !entry.dir && entry.name.endsWith('.sarif'))
 						.map((entry, i) => {
-							let cachedPromise = undefined
+							let cachedPromise = undefined as string
 							return {
 								key:   i,
 								text:  entry.name.replace('CodeAnalysisLogs/', ''),
-								sarif: () => cachedPromise = cachedPromise || entry.async('string')
+								sarif: () => cachedPromise = cachedPromise || entry.async('string') as string
 							}
 						})
 				})()
-				const first = files && files[0]
-				const log = first && JSON.parse(await first.sarif()) as Log
-				this.runs = log.runs
+
+				const logTexts = await Promise.all(files.map(async file => await file.sarif()))
+				this.logs = logTexts.map(log => JSON.parse(log) as Log)
 				VSS.notifyLoadSucceeded()
 			}
 			VSS.getConfiguration().onBuildChanged(onBuildChanged) // ;onBuildChanged({ id: 334, project: { id: '185a21d5-2948-4dca-9f43-a9248d571bd3' } })
 		})
 	}
 	render() {
-		const {runs} = this
-		return !runs || runs.length
-			? <Viewer runs={runs} />
+		const {logs} = this
+		return !logs || logs.length
+			? <Viewer logs={logs} />
 			: <div className="full">No SARIF artifacts found.</div>
 	}
 }
