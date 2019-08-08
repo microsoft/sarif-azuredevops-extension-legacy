@@ -8,7 +8,7 @@ import {observer} from 'mobx-react'
 
 import 'script-loader!vss-web-extension-sdk/lib/VSS.SDK.min.js'
 import * as JSZip from 'jszip'
-import {Log, Run, Viewer} from 'sarif-web-component'
+import {Log, Viewer} from 'sarif-web-component'
 declare var VSS: any
 
 @observer class Tab extends React.Component {
