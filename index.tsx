@@ -40,7 +40,23 @@ declare var VSS: any
 				})()
 
 				const logTexts = await Promise.all(files.map(async file => await file.sarif()))
-				this.logs = logTexts.map(log => JSON.parse(log) as Log)
+				const logs = logTexts.map(log => JSON.parse(log) as Log)
+
+				// Show file names when the tool names are homogeneous.
+				if (files.length > 1) {
+					const toolNames = logs.map(log => log.runs.map(run => run.tool.driver.name))
+					const toolNamesSet = new Set([].concat(...toolNames))
+					if (toolNamesSet.size === 1) {
+						logs.forEach((log, i) => 
+							log.runs.forEach(run => {
+								run.properties = run.properties || {}
+								run.properties['logFileName'] = files[i].text
+							})
+						)
+					}
+				}
+
+				this.logs = logs
 				VSS.notifyLoadSucceeded()
 			}
 			VSS.getConfiguration().onBuildChanged(onBuildChanged) // ;onBuildChanged({ id: 334, project: { id: '185a21d5-2948-4dca-9f43-a9248d571bd3' } })
