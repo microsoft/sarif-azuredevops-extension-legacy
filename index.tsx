@@ -6,10 +6,14 @@ import * as ReactDOM from 'react-dom'
 import {observable} from 'mobx'
 import {observer} from 'mobx-react'
 
+import {AppInsights} from "applicationinsights-js"
 import 'script-loader!vss-web-extension-sdk/lib/VSS.SDK.min.js'
 import * as JSZip from 'jszip'
 import {Log, Viewer} from 'sarif-web-component'
 declare var VSS: any
+
+const isProduction = self !== top
+const perfLoadStart = performance.now() // For telemetry.
 
 @observer class Tab extends React.Component {
 	@observable.ref logs = undefined as Log[]
@@ -20,6 +24,11 @@ declare var VSS: any
 			explicitNotifyLoaded: true,
 		})
 		VSS.require(['TFS/Build/RestClient'], restClient => {
+			const wc = VSS.getWebContext()
+			if (isProduction) {
+				AppInsights.setAuthenticatedUserContext(wc.user.uniqueName, wc.account.name)
+			}
+
 			const client = restClient.getClient()
 			const onBuildChanged = async build => {
 				const artifacts = await client.getArtifacts(build.id, build.project.id)
@@ -58,6 +67,10 @@ declare var VSS: any
 
 				this.logs = logs
 				VSS.notifyLoadSucceeded()
+
+				if (isProduction) {
+					AppInsights.trackPageView(wc.project.name, document.referrer, undefined, undefined, performance.now() - perfLoadStart)
+				}
 			}
 			VSS.getConfiguration().onBuildChanged(onBuildChanged) // ;onBuildChanged({ id: 334, project: { id: '185a21d5-2948-4dca-9f43-a9248d571bd3' } })
 		})
@@ -70,4 +83,8 @@ declare var VSS: any
 	}
 }
 
+if (isProduction) {
+	AppInsights.downloadAndSetup({ instrumentationKey: 'b5fae72b-955d-40ef-a25b-7f2527ae710e' })
+	addEventListener('unhandledrejection', e => AppInsights.trackException(e.reason))
+}
 ReactDOM.render(<Tab />, document.getElementById("app"))
