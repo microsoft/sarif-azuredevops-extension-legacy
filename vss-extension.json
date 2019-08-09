@@ -1,11 +1,8 @@
 {
 	"manifestVersion": 1,
-	"id": "sarif-viewer-build-tab",
 	"publisher": "sariftools",
-	"version": "0.2.0",
-	"name": "Sarif Viewer Build Tab",
+	"version": "0.2.25",
 	"description": "View Sarif artifacts directly from the build page.",
-	"public": true,
 	"categories": ["Azure Pipelines"],
 	"targets": [{ "id": "Microsoft.VisualStudio.Services" }],
 	"icons": { "default": "default-icon.png" },
@@ -16,17 +13,6 @@
 		"anonymous",
 		"public",
 		"member"
-	],
-	"contributions": [
-		{
-			"id": "sariftools.sarif-viewer-build-tab",
-			"type": "ms.vss-build-web.build-results-tab",
-			"targets": ["ms.vss-build-web.build-results-view"],
-			"properties": {
-				"name": "Scans",
-				"uri": "index.html"
-			}
-		}
 	],
 	"files": [
 		{ "addressable": true, "path": "index.html" },

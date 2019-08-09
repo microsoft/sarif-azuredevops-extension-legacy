@@ -5,7 +5,8 @@
 	"main": "index.js",
 	"scripts": {
 		"start": "webpack-dev-server --mode development",
-		"publish": "webpack && tfx extension publish --output-path: vsix --rev-version"
+		"publish": "webpack && tfx extension publish --output-path: vsix --rev-version --overrides-file vss-extension.prod.json",
+		"publish-dev": "webpack && tfx extension publish --output-path: vsix --rev-version --overrides-file vss-extension.dev.json"
 	},
 	"dependencies": {
 		"applicationinsights-js": "^1.0.20",
