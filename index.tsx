@@ -23,13 +23,13 @@ const perfLoadStart = performance.now() // For telemetry.
 			applyTheme: true,
 			explicitNotifyLoaded: true,
 		})
-		VSS.require(['TFS/Build/RestClient'], restClient => {
+		VSS.require(['TFS/Build/RestClient'], buildModule => {
 			const wc = VSS.getWebContext()
 			if (isProduction) {
 				AppInsights.setAuthenticatedUserContext(wc.user.uniqueName, wc.account.name)
 			}
 
-			const client = restClient.getClient()
+			const client = buildModule.getClient()
 			const onBuildChanged = async build => {
 				const artifacts = await client.getArtifacts(build.id, build.project.id)
 				const files = await (async () => {
