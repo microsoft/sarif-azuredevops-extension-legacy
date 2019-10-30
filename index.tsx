@@ -32,6 +32,7 @@ const perfLoadStart = performance.now() // For telemetry.
 			const client = buildModule.getClient()
 			const onBuildChanged = build => {
 				;(async () => { // Wrapper IIFE to allow rejection to be caught by our own telemetry.
+					// Otherwise consumed by: /WebPlatform/Web/extensions/vss-web/vss-platform/Trace.ts
 				const artifacts = await client.getArtifacts(build.id, build.project.id)
 				const files = await (async () => {
 					if (!artifacts.some(a => a.name === 'CodeAnalysisLogs')) return []
