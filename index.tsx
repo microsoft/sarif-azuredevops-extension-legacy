@@ -30,7 +30,8 @@ const perfLoadStart = performance.now() // For telemetry.
 			}
 
 			const client = buildModule.getClient()
-			const onBuildChanged = async build => {
+			const onBuildChanged = build => {
+				;(async () => { // Wrapper IIFE to allow rejection to be caught by our own telemetry.
 				const artifacts = await client.getArtifacts(build.id, build.project.id)
 				const files = await (async () => {
 					if (!artifacts.some(a => a.name === 'CodeAnalysisLogs')) return []
@@ -71,6 +72,7 @@ const perfLoadStart = performance.now() // For telemetry.
 				if (isProduction) {
 					AppInsights.trackPageView(wc.project.name, document.referrer, undefined, undefined, performance.now() - perfLoadStart)
 				}
+				})()
 			}
 			VSS.getConfiguration().onBuildChanged(onBuildChanged) // ;onBuildChanged({ id: 334, project: { id: '185a21d5-2948-4dca-9f43-a9248d571bd3' } })
 		})
