@@ -54,7 +54,11 @@ const perfLoadStart = performance.now() // For telemetry.
 
 				// Show file names when the tool names are homogeneous.
 				if (files.length > 1) {
-					const toolNames = logs.map(log => log.runs.map(run => run.tool.driver.name))
+						const toolNames = logs.map(log => {
+							return log.runs
+								.filter(run => run.tool.driver) // Guard against old versions.
+								.map(run => run.tool.driver.name)
+						})
 					const toolNamesSet = new Set([].concat(...toolNames))
 					if (toolNamesSet.size === 1) {
 						logs.forEach((log, i) => 
