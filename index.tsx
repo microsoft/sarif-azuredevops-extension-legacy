@@ -80,7 +80,11 @@ const perfLoadStart = performance.now() // For telemetry.
 					VSS.notifyLoadSucceeded()
 
 					if (isProduction) {
-						AppInsights.trackPageView(wc.project.name, document.referrer, undefined, undefined, performance.now() - perfLoadStart)
+						const customDimensions = {
+							logLength: logs.length + '',
+							version: VSS.getExtensionContext().version,
+						}
+						AppInsights.trackPageView(wc.project.name, document.referrer, customDimensions, undefined, performance.now() - perfLoadStart)
 					}
 				})()
 			}
