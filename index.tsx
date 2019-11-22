@@ -54,15 +54,15 @@ const perfLoadStart = performance.now() // For telemetry.
 					const logTexts = await Promise.all(files.map(async file => await file.sarif()))
 					const logs = logTexts.map(log => JSON.parse(log) as Log)
 
-					// Show file names when the tool names are homogeneous.
-					if (files.length > 1) {
 						const toolNames = logs.map(log => {
 							return log.runs
 								.filter(run => run.tool.driver) // Guard against old versions.
 								.map(run => run.tool.driver.name)
 						})
 						const toolNamesSet = new Set([].concat(...toolNames))
-						if (toolNamesSet.size === 1) {
+
+					// Show file names when the tool names are homogeneous.
+					if (files.length > 1 && toolNamesSet.size === 1) {
 							logs.forEach((log, i) => 
 								log.runs.forEach(run => {
 									run.properties = run.properties || {}
@@ -70,7 +70,6 @@ const perfLoadStart = performance.now() // For telemetry.
 								})
 							)
 						}
-					}
 
 					runInAction(() => {
 						this.logs = logs
@@ -82,6 +81,7 @@ const perfLoadStart = performance.now() // For telemetry.
 					if (isProduction) {
 						const customDimensions = {
 							logLength: logs.length + '',
+							toolNames: [...toolNamesSet.values()].join(' '),
 							version: VSS.getExtensionContext().version,
 						}
 						AppInsights.trackPageView(wc.project.name, document.referrer, customDimensions, undefined, performance.now() - perfLoadStart)
