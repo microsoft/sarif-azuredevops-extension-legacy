@@ -115,7 +115,7 @@ const perfLoadStart = performance.now() // For telemetry.
 }
 
 if (isProduction) {
-	AppInsights.downloadAndSetup({ instrumentationKey: 'b5fae72b-955d-40ef-a25b-7f2527ae710e' })
+	AppInsights.downloadAndSetup({ instrumentationKey: '' })
 	addEventListener('unhandledrejection', e => AppInsights.trackException(e.reason))
 }
 ReactDOM.render(<Tab />, document.getElementById("app"))
