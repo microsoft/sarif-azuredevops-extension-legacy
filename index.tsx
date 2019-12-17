@@ -97,7 +97,7 @@ const perfLoadStart = performance.now() // For telemetry.
 		const {logs, pipelineId, user} = this
 		const filterState = {
 			Baseline: { value: ['new', 'updated', 'absent'] },
-			Level: { value: ['error'] },
+			Level: { value: ['error', 'warning'] },
 		}
 		return !logs || logs.length
 			? <Viewer logs={logs} pipelineId={pipelineId} filterState={filterState} user={user} />
