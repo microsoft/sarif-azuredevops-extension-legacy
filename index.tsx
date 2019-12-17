@@ -38,7 +38,7 @@ const perfLoadStart = performance.now() // For telemetry.
 					const artifacts = await client.getArtifacts(build.id, build.project.id)
 					const files = await (async () => {
 						if (!artifacts.some(a => a.name === 'CodeAnalysisLogs')) return []
-						const arrayBuffer = await client.getArtifactContentZip(build.id, 'CodeAnalysisLogs', build.project.id)					
+						const arrayBuffer = await client.getArtifactContentZip(build.id, 'CodeAnalysisLogs', build.project.id)
 						const zip = await JSZip.loadAsync(arrayBuffer)
 						return Object.values<any>(zip.files)
 							.filter(entry => !entry.dir && entry.name.endsWith('.sarif'))
@@ -64,22 +64,22 @@ const perfLoadStart = performance.now() // For telemetry.
 						}
 					}).filter(log => log)
 
-						const toolNames = logs.map(log => {
-							return log.runs
-								.filter(run => run.tool.driver) // Guard against old versions.
-								.map(run => run.tool.driver.name)
-						})
-						const toolNamesSet = new Set([].concat(...toolNames))
+					const toolNames = logs.map(log => {
+						return log.runs
+							.filter(run => run.tool.driver) // Guard against old versions.
+							.map(run => run.tool.driver.name)
+					})
+					const toolNamesSet = new Set([].concat(...toolNames))
 
 					// Show file names when the tool names are homogeneous.
 					if (files.length > 1 && toolNamesSet.size === 1) {
-							logs.forEach((log, i) => 
-								log.runs.forEach(run => {
-									run.properties = run.properties || {}
-									run.properties['logFileName'] = files[i].text
-								})
-							)
-						}
+						logs.forEach((log, i) => 
+							log.runs.forEach(run => {
+								run.properties = run.properties || {}
+								run.properties['logFileName'] = files[i].text
+							})
+						)
+					}
 
 					runInAction(() => {
 						this.logs = logs
