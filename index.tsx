@@ -53,7 +53,16 @@ const perfLoadStart = performance.now() // For telemetry.
 					})()
 
 					const logTexts = await Promise.all(files.map(async file => await file.sarif()))
-					const logs = logTexts.map(log => JSON.parse(log) as Log)
+
+					// Some logs are: Unexpected token ﻿ in JSON at position 0
+					const logs = logTexts.map(log => {
+						try {
+							return JSON.parse(log) as Log
+						} catch(e) {
+							AppInsights.trackException(e, `log: ${log.slice(0, 100)}`)
+							return undefined
+						}
+					}).filter(log => log)
 
 						const toolNames = logs.map(log => {
 							return log.runs
