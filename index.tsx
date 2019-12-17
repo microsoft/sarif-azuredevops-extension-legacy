@@ -18,6 +18,7 @@ const perfLoadStart = performance.now() // For telemetry.
 @observer class Tab extends React.Component {
 	@observable.ref logs = undefined as Log[]
 	@observable pipelineId = undefined as string
+	@observable user = undefined as string
 	constructor(props) {
 		super(props)
 		VSS.init({
@@ -74,6 +75,7 @@ const perfLoadStart = performance.now() // For telemetry.
 					runInAction(() => {
 						this.logs = logs
 						this.pipelineId = `${VSS.getWebContext().account.name}.${build.definition.id}`
+						this.user = wc.user.name
 					})
 					
 					VSS.notifyLoadSucceeded()
@@ -92,13 +94,13 @@ const perfLoadStart = performance.now() // For telemetry.
 		})
 	}
 	render() {
-		const {logs, pipelineId} = this
+		const {logs, pipelineId, user} = this
 		const filterState = {
 			Baseline: { value: ['new', 'updated', 'absent'] },
 			Level: { value: ['error'] },
 		}
 		return !logs || logs.length
-			? <Viewer logs={logs} pipelineId={pipelineId} filterState={filterState} />
+			? <Viewer logs={logs} pipelineId={pipelineId} filterState={filterState} user={user} />
 			: <div className="full">No SARIF artifacts found.</div>
 	}
 }
