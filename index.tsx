@@ -27,7 +27,7 @@ const perfLoadStart = performance.now() // For telemetry.
 		VSS.require(['TFS/Build/RestClient'], buildModule => {
 			const wc = VSS.getWebContext()
 			if (isProduction) {
-				AppInsights.setAuthenticatedUserContext(wc.user.uniqueName, wc.account.name)
+				AppInsights.setAuthenticatedUserContext(wc.user.uniqueName /* typically email */, wc.account.name)
 			}
 
 			const client = buildModule.getClient()
