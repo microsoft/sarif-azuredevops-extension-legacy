@@ -9,7 +9,7 @@ import {observer} from 'mobx-react'
 import {AppInsights} from "applicationinsights-js"
 import 'script-loader!vss-web-extension-sdk/lib/VSS.SDK.min.js'
 import * as JSZip from 'jszip'
-import {Log, Viewer} from 'sarif-web-component'
+import {Log, Viewer} from '@microsoft/sarif-web-component'
 declare var VSS: any
 
 const isProduction = self !== top

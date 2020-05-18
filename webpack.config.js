@@ -7,8 +7,9 @@ module.exports = {
 	resolve: {
 		extensions: [".js", ".jsx", ".ts", ".tsx"],
 		alias: {
-			'react': path.resolve('node_modules/react'),
-			'react-dom': path.resolve('node_modules/react-dom'),
+			// LHS must match webpack `externals` of sarif-web-component.
+			'React': path.resolve('node_modules/react'),
+			'ReactDOM': path.resolve('node_modules/react-dom'),
 		},
 	},
 	module: {
