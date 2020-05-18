@@ -11,7 +11,7 @@ As a DevOps organization owner, install from the [Visual Studio Marketplace](htt
 ## Publishing to Visual Studio Marketplace
 
 As a developer on this project, here is the pre-publish checklist:
-* Check the `package.json` `version` relative to the last published version at [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=sariftools.sarif-viewer-build-tab). The version may need to be manually incremented.
+* Check the `vss-extension.json` `version` relative to the last published version at [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=sariftools.sarif-viewer-build-tab). The version may need to be manually incremented.
 * If App Insights telemery is desired, remember to fill in your `instrumentationKey` in `index.tsx` (near the bottom).
 
 Finally to publish, use:
