@@ -2,9 +2,23 @@
 
 An Azure DevOps extension encapsulating the [SARIF Web Component](https://github.com/Microsoft/sarif-web-component).
 
-## Usage
+## Installation
 
-Install from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=sariftools.sarif-viewer-build-tab).
+As a DevOps end user, you will need to contact your organization owner to install this (and any) extension. Find your organization owner at `https://dev.azure.com/{yourorganization}/_settings/organizationOverview`.
+
+As a DevOps organization owner, install from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=sariftools.sarif-viewer-build-tab).
+
+## Publishing to Visual Studio Marketplace
+
+As a developer on this project, here is the pre-publish checklist:
+* Check the `package.json` `version` relative to the last published version at [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=sariftools.sarif-viewer-build-tab). The version may need to be manually incremented.
+* If App Insights telemery is desired, remember to fill in your `instrumentationKey` in `index.tsx` (near the bottom).
+
+Finally to publish, use:
+```
+npm run publish
+```
+You may be prompted for your personal access token. Verify deployment at [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=sariftools.sarif-viewer-build-tab) (check the version and release date).
 
 ## Contributing
 
