@@ -27,6 +27,10 @@ module.exports = {
 			{ test: /\.woff$/, use: 'url-loader' },
 		]
 	},
+	performance: {
+		maxAssetSize: 1.3 * 1024 * 1024,
+		maxEntrypointSize: 1.3 * 1024 * 1024,
+	},
 	devServer : {
 		host: '0.0.0.0', // Neccesary to server outside localhost
 		port: 8080,
