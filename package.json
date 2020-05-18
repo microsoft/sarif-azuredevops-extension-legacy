@@ -1,7 +1,11 @@
 {
 	"name": "sarif-viewer-build-tab",
-	"version": "1.0.0",
+	"version": "0.0.0",
 	"description": "Sarif Viewer DevOps Build Extension",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/microsoft/sarif-azuredevops-extension.git"
+	},
 	"main": "index.js",
 	"scripts": {
 		"start": "webpack-dev-server --mode development",
