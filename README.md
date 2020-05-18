@@ -16,6 +16,7 @@ As a developer on this project, here is the pre-publish checklist:
 
 Finally to publish, use:
 ```
+npm install
 npm run publish
 ```
 You may be prompted for your personal access token. Verify deployment at [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=sariftools.sarif-viewer-build-tab) (check the version and release date).
