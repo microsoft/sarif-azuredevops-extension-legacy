@@ -103,13 +103,13 @@ const perfLoadStart = performance.now() // For telemetry.
 		})
 	}
 	render() {
-		const {logs, pipelineId, user} = this
+		const {logs, user} = this
 		const filterState = {
 			Baseline: { value: ['new', 'updated', 'absent'] },
 			Level: { value: ['error', 'warning'] },
 		}
 		return !logs || logs.length
-			? <Viewer logs={logs} pipelineId={pipelineId} filterState={filterState} user={user} />
+			? <Viewer logs={logs} filterState={filterState} user={user} />
 			: <div className="full">No SARIF artifacts found.</div>
 	}
 }
