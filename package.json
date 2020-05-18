@@ -5,7 +5,7 @@
 	"main": "index.js",
 	"scripts": {
 		"start": "webpack-dev-server --mode development",
-		"publish": "webpack && tfx extension publish --output-path: vsix --rev-version --overrides-file vss-extension.prod.json",
+		"publish": "webpack && tfx extension publish --output-path: vsix --overrides-file vss-extension.prod.json",
 		"publish-dev": "webpack && tfx extension publish --output-path: vsix --rev-version --overrides-file vss-extension.dev.json"
 	},
 	"dependencies": {
