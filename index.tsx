@@ -100,6 +100,7 @@ const perfLoadStart = performance.now() // For telemetry.
 				})()
 			}
 			VSS.getConfiguration().onBuildChanged(onBuildChanged) // ;onBuildChanged({ id: 334, project: { id: '185a21d5-2948-4dca-9f43-a9248d571bd3' } })
+			console.info('Version', VSS.getExtensionContext().version)
 		})
 	}
 	render() {
