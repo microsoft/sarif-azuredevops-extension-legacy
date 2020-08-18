@@ -2,6 +2,13 @@
 	"id": "sarif-viewer-build-tab-dev",
 	"name": "Sarif Viewer Build Tab DEV",
 	"public": false,
+	"repository": {
+		"type": "git",
+		"uri": "https://github.com/microsoft/sarif-azuredevops-extension"
+	},
+	"CustomerQnASupport": {
+		"enableqna":"true"
+	},
 	"contributions": [
 		{
 			"id": "sariftools.sarif-viewer-build-tab",
