@@ -7,10 +7,12 @@ import {observable, runInAction} from 'mobx'
 import {observer} from 'mobx-react'
 
 import {AppInsights} from "applicationinsights-js"
-import 'script-loader!vss-web-extension-sdk/lib/VSS.SDK.min.js'
 import * as JSZip from 'jszip'
 import {Log, Viewer} from '@microsoft/sarif-web-component'
-declare var VSS: any
+
+import * as SDK from 'azure-devops-extension-sdk'
+import { getClient } from 'azure-devops-extension-api'
+import { Build, BuildRestClient } from 'azure-devops-extension-api/Build'
 
 const isProduction = self !== top
 const perfLoadStart = performance.now() // For telemetry.
@@ -21,24 +23,26 @@ const perfLoadStart = performance.now() // For telemetry.
 	@observable user = undefined as string
 	constructor(props) {
 		super(props)
-		VSS.init({
+		SDK.init({
 			applyTheme: true,
-			explicitNotifyLoaded: true,
+			loaded: true,
 		})
-		VSS.require(['TFS/Build/RestClient'], buildModule => {
-			const wc = VSS.getWebContext()
+		;(async () => {
+			await SDK.ready()
+			const user = SDK.getUser()
+			const organization = SDK.getHost().name
 			if (isProduction) {
-				AppInsights.setAuthenticatedUserContext(wc.user.uniqueName /* typically email */, wc.account.name)
+				AppInsights.setAuthenticatedUserContext(user.id /* typically email */, organization)
 			}
 
-			const client = buildModule.getClient()
-			const onBuildChanged = build => {
+			const client = getClient(BuildRestClient)
+			const onBuildChanged = (build: Build) => {
 				;(async () => { // Wrapper IIFE to allow rejection to be caught by our own telemetry.
 					// Otherwise consumed by: /WebPlatform/Web/extensions/vss-web/vss-platform/Trace.ts
-					const artifacts = await client.getArtifacts(build.id, build.project.id)
+					const artifacts = await client.getArtifacts(build.project.id, build.id)
 					const files = await (async () => {
 						if (!artifacts.some(a => a.name === 'CodeAnalysisLogs')) return []
-						const arrayBuffer = await client.getArtifactContentZip(build.id, 'CodeAnalysisLogs', build.project.id)
+						const arrayBuffer = await client.getArtifactContentZip(build.project.id, build.id, 'CodeAnalysisLogs')
 						const zip = await JSZip.loadAsync(arrayBuffer)
 						return Object.values<any>(zip.files)
 							.filter(entry => !entry.dir && entry.name.endsWith('.sarif'))
@@ -83,25 +87,25 @@ const perfLoadStart = performance.now() // For telemetry.
 
 					runInAction(() => {
 						this.logs = logs
-						this.pipelineId = `${VSS.getWebContext().account.name}.${build.definition.id}`
-						this.user = wc.user.name
+						this.pipelineId = `${organization}.${build.definition.id}`
+						this.user = user.name
 					})
 					
-					VSS.notifyLoadSucceeded()
+					SDK.notifyLoadSucceeded()
 
 					if (isProduction) {
 						const customDimensions = {
 							logLength: logs.length + '',
 							toolNames: [...toolNamesSet.values()].join(' '),
-							version: VSS.getExtensionContext().version,
+							version: SDK.getExtensionContext().version,
 						}
-						AppInsights.trackPageView(wc.project.name, document.referrer, customDimensions, undefined, performance.now() - perfLoadStart)
+						AppInsights.trackPageView(build.project.name, document.referrer, customDimensions, undefined, performance.now() - perfLoadStart)
 					}
 				})()
 			}
-			VSS.getConfiguration().onBuildChanged(onBuildChanged) // ;onBuildChanged({ id: 334, project: { id: '185a21d5-2948-4dca-9f43-a9248d571bd3' } })
-			console.info('Version', VSS.getExtensionContext().version)
-		})
+			SDK.getConfiguration().onBuildChanged(onBuildChanged) // ;onBuildChanged({ id: 334, project: { id: '185a21d5-2948-4dca-9f43-a9248d571bd3' } })
+			console.info('Version', SDK.getExtensionContext().version)
+		})()
 	}
 	render() {
 		const {logs, user} = this
