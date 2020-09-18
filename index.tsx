@@ -1,18 +1,16 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-import * as React from 'react'
-import * as ReactDOM from 'react-dom'
-import {observable, runInAction} from 'mobx'
-import {observer} from 'mobx-react'
-
-import {AppInsights} from "applicationinsights-js"
-import * as JSZip from 'jszip'
-import {Log, Viewer} from '@microsoft/sarif-web-component'
-
-import * as SDK from 'azure-devops-extension-sdk'
+import { Log, Viewer } from '@microsoft/sarif-web-component'
+import { AppInsights } from "applicationinsights-js"
 import { CommonServiceIds, getClient, IProjectPageService } from 'azure-devops-extension-api'
 import { BuildRestClient, BuildServiceIds, IBuildPageDataService } from 'azure-devops-extension-api/Build'
+import * as SDK from 'azure-devops-extension-sdk'
+import * as JSZip from 'jszip'
+import { observable, runInAction } from 'mobx'
+import { observer } from 'mobx-react'
+import * as React from 'react'
+import * as ReactDOM from 'react-dom'
 
 const isProduction = self !== top
 const perfLoadStart = performance.now() // For telemetry.
