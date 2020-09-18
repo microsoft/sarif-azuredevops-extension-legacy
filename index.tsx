@@ -11,8 +11,8 @@ import * as JSZip from 'jszip'
 import {Log, Viewer} from '@microsoft/sarif-web-component'
 
 import * as SDK from 'azure-devops-extension-sdk'
-import { getClient } from 'azure-devops-extension-api'
-import { Build, BuildRestClient } from 'azure-devops-extension-api/Build'
+import { CommonServiceIds, getClient, IProjectPageService } from 'azure-devops-extension-api'
+import { BuildRestClient, BuildServiceIds, IBuildPageDataService } from 'azure-devops-extension-api/Build'
 
 const isProduction = self !== top
 const perfLoadStart = performance.now() // For telemetry.
@@ -29,82 +29,91 @@ const perfLoadStart = performance.now() // For telemetry.
 		})
 		;(async () => {
 			await SDK.ready()
+			console.info('Version', SDK.getExtensionContext().version)
+
 			const user = SDK.getUser()
 			const organization = SDK.getHost().name
 			if (isProduction) {
 				AppInsights.setAuthenticatedUserContext(user.id /* typically email */, organization)
 			}
 
-			const client = getClient(BuildRestClient)
-			const onBuildChanged = (build: Build) => {
-				;(async () => { // Wrapper IIFE to allow rejection to be caught by our own telemetry.
-					// Otherwise consumed by: /WebPlatform/Web/extensions/vss-web/vss-platform/Trace.ts
-					const artifacts = await client.getArtifacts(build.project.id, build.id)
-					const files = await (async () => {
-						if (!artifacts.some(a => a.name === 'CodeAnalysisLogs')) return []
-						const arrayBuffer = await client.getArtifactContentZip(build.project.id, build.id, 'CodeAnalysisLogs')
-						const zip = await JSZip.loadAsync(arrayBuffer)
-						return Object.values<any>(zip.files)
-							.filter(entry => !entry.dir && entry.name.endsWith('.sarif'))
-							.map((entry, i) => {
-								let cachedPromise = undefined as string
-								return {
-									key:   i,
-									text:  entry.name.replace('CodeAnalysisLogs/', ''),
-									sarif: () => cachedPromise = cachedPromise || entry.async('string') as string
-								}
-							})
-					})()
+			const projectService = await SDK.getService<IProjectPageService>(CommonServiceIds.ProjectPageService)
+			const project = await projectService.getProject()
 
-					const logTexts = await Promise.all(files.map(async file => await file.sarif()))
-
-					// Some logs are: Unexpected token ﻿ in JSON at position 0
-					const logs = logTexts.map(log => {
-						try {
-							return JSON.parse(log) as Log
-						} catch(e) {
-							AppInsights.trackException(e, `log: ${log.slice(0, 100)}`)
-							return undefined
-						}
-					}).filter(log => log)
-
-					const toolNames = logs.map(log => {
-						return log.runs
-							.filter(run => run.tool.driver) // Guard against old versions.
-							.map(run => run.tool.driver.name)
-					})
-					const toolNamesSet = new Set([].concat(...toolNames))
-
-					// Show file names when the tool names are homogeneous.
-					if (files.length > 1 && toolNamesSet.size === 1) {
-						logs.forEach((log, i) => 
-							log.runs.forEach(run => {
-								run.properties = run.properties || {}
-								run.properties['logFileName'] = files[i].text
-							})
-						)
-					}
-
-					runInAction(() => {
-						this.logs = logs
-						this.pipelineId = `${organization}.${build.definition.id}`
-						this.user = user.name
-					})
-					
-					SDK.notifyLoadSucceeded()
-
-					if (isProduction) {
-						const customDimensions = {
-							logLength: logs.length + '',
-							toolNames: [...toolNamesSet.values()].join(' '),
-							version: SDK.getExtensionContext().version,
-						}
-						AppInsights.trackPageView(build.project.name, document.referrer, customDimensions, undefined, performance.now() - perfLoadStart)
-					}
-				})()
+			const buildPageDataService = await SDK.getService<IBuildPageDataService>(BuildServiceIds.BuildPageDataService)
+			const buildPageData = await buildPageDataService.getBuildPageData()
+			if (!buildPageData) {
+				SDK.notifyLoadSucceeded()
+				AppInsights.trackException(new Error('buildPageData undefined'))
+				return
 			}
-			SDK.getConfiguration().onBuildChanged(onBuildChanged) // ;onBuildChanged({ id: 334, project: { id: '185a21d5-2948-4dca-9f43-a9248d571bd3' } })
-			console.info('Version', SDK.getExtensionContext().version)
+			const { build, definition } = buildPageData
+
+			const buildClient = getClient(BuildRestClient)
+
+			// Otherwise consumed by: /WebPlatform/Web/extensions/vss-web/vss-platform/Trace.ts
+			const artifacts = await buildClient.getArtifacts(project.id, build.id)
+			const files = await (async () => {
+				if (!artifacts.some(a => a.name === 'CodeAnalysisLogs')) return []
+				const arrayBuffer = await buildClient.getArtifactContentZip(project.id, build.id, 'CodeAnalysisLogs')
+				const zip = await JSZip.loadAsync(arrayBuffer)
+				return Object.values<any>(zip.files)
+					.filter(entry => !entry.dir && entry.name.endsWith('.sarif'))
+					.map((entry, i) => {
+						let cachedPromise = undefined as string
+						return {
+							key:   i,
+							text:  entry.name.replace('CodeAnalysisLogs/', ''),
+							sarif: () => cachedPromise = cachedPromise || entry.async('string') as string
+						}
+					})
+			})()
+
+			const logTexts = await Promise.all(files.map(async file => await file.sarif()))
+
+			// Some logs are: Unexpected token ﻿ in JSON at position 0
+			const logs = logTexts.map(log => {
+				try {
+					return JSON.parse(log) as Log
+				} catch(e) {
+					AppInsights.trackException(e, `log: ${log.slice(0, 100)}`)
+					return undefined
+				}
+			}).filter(log => log)
+
+			const toolNames = logs.map(log => {
+				return log.runs
+					.filter(run => run.tool.driver) // Guard against old versions.
+					.map(run => run.tool.driver.name)
+			})
+			const toolNamesSet = new Set([].concat(...toolNames))
+
+			// Show file names when the tool names are homogeneous.
+			if (files.length > 1 && toolNamesSet.size === 1) {
+				logs.forEach((log, i) => 
+					log.runs.forEach(run => {
+						run.properties = run.properties || {}
+						run.properties['logFileName'] = files[i].text
+					})
+				)
+			}
+
+			runInAction(() => {
+				this.logs = logs
+				this.pipelineId = `${organization}.${definition.id}`
+				this.user = user.name
+			})
+			
+			SDK.notifyLoadSucceeded()
+
+			if (isProduction) {
+				const customDimensions = {
+					logLength: logs.length + '',
+					toolNames: [...toolNamesSet.values()].join(' '),
+					version: SDK.getExtensionContext().version,
+				}
+				AppInsights.trackPageView(project.name, document.referrer, customDimensions, undefined, performance.now() - perfLoadStart)
+			}
 		})()
 	}
 	render() {

@@ -1,6 +1,8 @@
 {
+	"publisher": "sariftools",
 	"id": "sarif-viewer-build-tab",
 	"name": "Sarif Viewer Build Tab",
+	"version": "0.4.1",
 	"public": true,
 	"contributions": [
 		{
