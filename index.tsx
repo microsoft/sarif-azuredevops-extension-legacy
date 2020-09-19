@@ -49,7 +49,6 @@ const perfLoadStart = performance.now() // For telemetry.
 
 			const buildClient = getClient(BuildRestClient)
 
-			// Otherwise consumed by: /WebPlatform/Web/extensions/vss-web/vss-platform/Trace.ts
 			const artifacts = await buildClient.getArtifacts(project.id, build.id)
 			const files = await (async () => {
 				if (!artifacts.some(a => a.name === 'CodeAnalysisLogs')) return []
