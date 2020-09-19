@@ -74,7 +74,7 @@ const perfLoadStart = performance.now() // For telemetry.
 				try {
 					return JSON.parse(log) as Log
 				} catch(e) {
-					AppInsights.trackException(e, `log: ${log.slice(0, 100)}`)
+					AppInsights.trackException(e, null, { logSnippet: JSON.stringify(log.slice(0, 100)) })
 					return undefined
 				}
 			}).filter(log => log)
