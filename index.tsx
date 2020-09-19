@@ -32,7 +32,7 @@ const perfLoadStart = performance.now() // For telemetry.
 			const user = SDK.getUser()
 			const organization = SDK.getHost().name
 			if (isProduction) {
-				AppInsights.setAuthenticatedUserContext(user.id /* typically email */, organization)
+				AppInsights.setAuthenticatedUserContext(user.name /* typically email */, organization)
 			}
 
 			const projectService = await SDK.getService<IProjectPageService>(CommonServiceIds.ProjectPageService)
