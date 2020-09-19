@@ -54,22 +54,28 @@ const perfLoadStart = performance.now() // For telemetry.
 				if (!artifacts.some(a => a.name === 'CodeAnalysisLogs')) return []
 				const arrayBuffer = await buildClient.getArtifactContentZip(project.id, build.id, 'CodeAnalysisLogs')
 				const zip = await JSZip.loadAsync(arrayBuffer)
-				return Object.values<any>(zip.files)
+				return Object.values(zip.files)
 					.filter(entry => !entry.dir && entry.name.endsWith('.sarif'))
-					.map((entry, i) => {
-						let cachedPromise = undefined as string
-						return {
-							key:   i,
-							text:  entry.name.replace('CodeAnalysisLogs/', ''),
-							sarif: () => cachedPromise = cachedPromise || entry.async('string') as string
-						}
-					})
+					.map(entry => ({
+						name:            entry.name.replace('CodeAnalysisLogs/', ''),
+						contentsPromise: entry.async('string')
+					}))
 			})()
 
-			const logTexts = await Promise.all(files.map(async file => await file.sarif()))
+			const logTexts = await Promise.all(files.map(async file => {
+				let contents = await file.contentsPromise
+				if (contents.match(/^\uFEFF/)) {
+					AppInsights.trackEvent('BOM trimmed')
+					contents = contents.replace(/^\uFEFF/, ''); // Trim BOM to avoid 'Unexpected token ﻿ in JSON at position 0'.
+				}
+				return contents
+			}))
 
-			// Some logs are: Unexpected token ﻿ in JSON at position 0
 			const logs = logTexts.map(log => {
+				if (log === '') {
+					AppInsights.trackEvent('Empty log')
+					return undefined
+				}
 				try {
 					return JSON.parse(log) as Log
 				} catch(e) {
@@ -90,7 +96,7 @@ const perfLoadStart = performance.now() // For telemetry.
 				logs.forEach((log, i) => 
 					log.runs.forEach(run => {
 						run.properties = run.properties || {}
-						run.properties['logFileName'] = files[i].text
+						run.properties['logFileName'] = files[i].name
 					})
 				)
 			}
