@@ -7,7 +7,7 @@
 		"uri": "https://github.com/microsoft/sarif-azuredevops-extension"
 	},
 	"CustomerQnASupport": {
-		"enableqna":"true"
+		"enableqna": true
 	},
 	"targets": [{ "id": "Microsoft.VisualStudio.Services" }],
 	"icons": { "default": "icon.png" },
