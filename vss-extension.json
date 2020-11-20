@@ -2,13 +2,6 @@
 	"manifestVersion": 1,
 	"description": "View Sarif artifacts directly from the build page.",
 	"categories": ["Azure Pipelines"],
-	"repository": {
-		"type": "git",
-		"uri": "https://github.com/microsoft/sarif-azuredevops-extension"
-	},
-	"CustomerQnASupport": {
-		"enableqna": true
-	},
 	"targets": [{ "id": "Microsoft.VisualStudio.Services" }],
 	"icons": { "default": "icon.png" },
 	"content": {
